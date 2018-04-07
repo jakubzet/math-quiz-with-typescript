@@ -110,13 +110,15 @@ ol {
     }
   }
   // Name entry
-  &__name-entry input {
-    border: none;
-    background: none;
-    color: $primary;
-    text-align: center;
-    outline: none;
-    font-size: 3em;
+  &__name-entry {
+    input {
+      border: none;
+      background: none;
+      color: $primary;
+      text-align: center;
+      outline: none;
+      font-size: 3em;
+    }
   }
   // Header
   &__header {
@@ -152,7 +154,9 @@ ol {
     }
   }
   // Question number
-  &__question-number div::after {
-    content: ".";
+  &__question-number {
+    div::after {
+      content: ".";
+    }
   }
 }
