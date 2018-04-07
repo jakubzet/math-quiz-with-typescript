@@ -1,0 +1,158 @@
+@import "_animations";
+@import "_background";
+@import "_variables";
+
+// GLOBAL STYLES
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: consolas, sans-serif;
+  min-height: 100vh;
+}
+button {
+  font-weight: bold;
+}
+ul,
+ol {
+  display: inline-block;
+}
+
+// MAIN COMPONENTS
+// Container
+.main {
+  flex-wrap: wrap;
+  margin: 0 !important;
+  text-align: center;
+  background-repeat: repeat;
+  background-position: 0 0;
+  min-height: inherit;
+  animation: bgScrolling 20s infinite linear;
+  & > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+// Screens toggling
+@for $i from 0 through 3 {
+  .screen#{$i} > div:not(.show-on-screen#{$i}) {
+    display: none;
+  }
+}
+.indicator__wrapper {
+  position: relative;
+  div {
+    font-weight: bold;
+    font-size: 1.5em;
+  }
+}
+// Rest
+.mathQuiz {
+  // Rules
+  &__rules > p {
+    font-weight: bold;
+  }
+  // Top results
+  &__top-results {
+    & > p {
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+    @at-root .resultsTable {
+      li {
+        font-size: 1.5em;
+        line-height: 1.75em;
+        overflow: hidden;
+      }
+      .name {
+        float: right;
+      }
+      .score {
+        float: left;
+        padding-right: 2em;
+        font-weight: bold;
+      }
+    }
+  }
+  // Time counter
+  &__time-counter {
+    background: transparent;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+
+    & > div {
+      background: $primary;
+      width: inherit;
+      height: inherit;
+      top: inherit;
+      left: inherit;
+      transform: translate3d(-100%, 0, 0);
+      transition: all 1000ms linear;
+      width: 100%;
+      opacity: 0.5;
+      will-change: transform;
+    }
+  }
+  // Question
+  &__question {
+    font-size: 5em;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    @at-root .question {
+      &:after {
+        content: "=?";
+      }
+    }
+  }
+  // Name entry
+  &__name-entry input {
+    border: none;
+    background: none;
+    color: $primary;
+    text-align: center;
+    outline: none;
+    font-size: 3em;
+  }
+  // Header
+  &__header {
+    h1 {
+      font-size: 2em;
+      font-weight: bold;
+      line-height: 1em;
+      margin-bottom: 0.5em;
+    }
+    small {
+      color: $primary;
+    }
+  }
+  // High scores
+  &__high-scores-header {
+    font-weight: bold;
+    h2 {
+      font-size: 2em;
+      line-height: 2em;
+      color: $primary;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+  }
+  // Answers
+  &__answers {
+    & > .button {
+      min-width: 90px;
+    }
+    & > .buttons {
+      margin: 0 auto;
+      display: inline-block;
+    }
+  }
+  // Question number
+  &__question-number div::after {
+    content: ".";
+  }
+}

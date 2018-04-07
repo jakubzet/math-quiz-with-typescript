@@ -1,0 +1,51 @@
+{
+  "name": "math-quiz-with-typescript",
+  "version": "1.0.0",
+  "description": "Simple browser game written in TypeScript with no frameworks - just for fun",
+  "main": "index.html",
+  "scripts": {
+    "watch": "webpack --progress --watch --mode development",
+    "dev": "webpack --mode development ./src/index.js --output ./dist/quiz.js",
+    "build": "webpack --mode production  ./src/index.js --output ./dist/quiz.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jakubzet/math-quiz-with-typescript.git"
+  },
+  "keywords": [
+    "typescript",
+    "javascript",
+    "html",
+    "css",
+    "math",
+    "quiz"
+  ],
+  "author": "jakubzet",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jakubzet/math-quiz-with-typescript/issues"
+  },
+  "homepage": "https://github.com/jakubzet/math-quiz-with-typescript#readme",
+  "devDependencies": {
+    "@types/lodash": "^4.14.106",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.4",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-es2015-native-modules": "^6.9.4",
+    "css-loader": "^0.28.11",
+    "node-sass": "^4.8.3",
+    "sass-loader": "^6.0.7",
+    "style-loader": "^0.20.3",
+    "ts-loader": "^4.1.0",
+    "typescript": "^2.8.1",
+    "webpack": "^4.4.1",
+    "webpack-cli": "^2.0.13",
+    "webpack-livereload-plugin": "^2.1.1"
+  },
+  "dependencies": {
+    "bulma": "^0.6.2",
+    "lodash": "^4.17.5"
+  }
+}
