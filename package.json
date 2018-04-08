@@ -1,26 +1,19 @@
 {
   "name": "math-quiz-with-typescript",
   "version": "1.0.0",
-  "description": "Simple browser game written in TypeScript with no frameworks - just for fun",
+  "description":
+    "Simple browser game written in TypeScript with no frameworks - just for fun",
   "main": "index.html",
   "scripts": {
-    "watch": "webpack --progress --watch --mode development",
-    "dev": "webpack --mode development ./src/index.js --output ./dist/quiz.js",
-    "build": "webpack --mode production  ./src/index.js --output ./dist/quiz.js",
+    "dev": "webpack --progress --watch --mode development",
+    "build": "webpack --progress",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jakubzet/math-quiz-with-typescript.git"
   },
-  "keywords": [
-    "typescript",
-    "javascript",
-    "html",
-    "css",
-    "math",
-    "quiz"
-  ],
+  "keywords": ["typescript", "javascript", "html", "css", "math", "quiz"],
   "author": "jakubzet",
   "license": "MIT",
   "bugs": {

@@ -1,9 +1,10 @@
+// Interfaces declarations
 interface nameInputInterface {
   node: HTMLElement;
   action: Function;
 }
 
-interface stateInterface {
+interface stateType {
   score: number;
   questionNo: number;
   questions: Array<string>;
@@ -17,33 +18,28 @@ interface stateInterface {
   [propName: string]: string | number | boolean | Array<string> | undefined;
 }
 
-interface configInterface {
-  QUESTION_TIMEOUT: number;
-  NUMBER_OF_ANSWERS: number;
-  NUMBER_OF_QUESTIONS: number;
-  APP_CONTAINER: HTMLElement;
-  NUMBER_OF_BEST_RESULTS: number;
+interface configType {
+  QUESTION_TIMEOUT?: number;
+  NUMBER_OF_ANSWERS?: number;
+  NUMBER_OF_QUESTIONS?: number;
+  APP_CONTAINER?: HTMLElement;
+  NUMBER_OF_BEST_RESULTS?: number;
 }
 
-interface highScoresEntryInterface {
+interface highScoresEntryType {
   name: string;
   score: number;
 }
 
-interface containersInterface {
+interface containersType {
   [propName: string]: HTMLElement;
 }
 
-interface controlsInterface {
+interface controlsType {
   [propName: string]: Function;
 }
 
-type stateType = stateInterface;
-type configType = configInterface;
-type highScoresEntryType = highScoresEntryInterface;
-type containersType = containersInterface;
-type controlsType = controlsInterface;
-
+// Class declaration
 class MathQuiz {
   CONFIG: configType = {
     QUESTION_TIMEOUT: null,
@@ -71,38 +67,30 @@ class MathQuiz {
     quizActive: null,
     nameEntryPossible: null,
   };
+
+  /**
+   * Quiz constructor
+   * @method constructor
+   * @param  quizConfig  configuration settings (optional)
+   */
   constructor(quizConfig?: configType) {
-    // App config with constants
-    this.CONFIG =
-      quizConfig ||
-      Object.freeze({
-        QUESTION_TIMEOUT: 10,
-        NUMBER_OF_ANSWERS: 4,
-        NUMBER_OF_QUESTIONS: 5,
-        APP_CONTAINER: document.getElementById("quiz"),
-        NUMBER_OF_BEST_RESULTS: 15,
-      });
-
-    // Containers for HTML updating
-    this.containers = {};
-
-    // Controls and actions
-    this.controls = {};
-
-    // High score name input
-    this.nameInput = {
-      node: null,
-      action: null,
+    const baseConfig = {
+      QUESTION_TIMEOUT: 10,
+      NUMBER_OF_ANSWERS: 4,
+      NUMBER_OF_QUESTIONS: 5,
+      APP_CONTAINER: document.getElementById("quiz"),
+      NUMBER_OF_BEST_RESULTS: 15,
     };
-
-    // High scores data
-    this.highScores = [];
-
-    // Current player state
-    this.state = this._getInitialState();
+    const userConfig = quizConfig || {};
+    // App config with constants
+    this.CONFIG = Object.freeze({ ...baseConfig, ...userConfig });
   }
 
-  // Return initial game state
+  /**
+   * Return initial game state
+   * @method _getInitialState
+   * @return Object of stateType with default state values
+   */
   _getInitialState(): stateType {
     return {
       score: 0,
@@ -118,24 +106,39 @@ class MathQuiz {
     };
   }
 
-  // Helper for transforming names into IDs
+  /**
+   * Helper for transforming names into IDs
+   * @method _normalizeName
+   * @param  str            name of container
+   * @return                normalized name string
+   */
   _normalizeName(str: string): string {
     return str.toLowerCase().replace(/ /gim, "-");
   }
 
+  /**
+   * Makes container for any of the quiz components
+   * @method _prepareContainer
+   * @param  name                        name of the container - will be needed in every you'll need to get that container
+   * @param  hasLabel                    should label be inserted into container
+   * @param  content                     child HTMLelement
+   * @param  addedCSSClassesForChild     additional CSS classes for container child
+   * @param  addedCSSClassesForContainer additional CSS classes for container itself
+   * @param  innerHTML                   inner HTML if in string form
+   */
   _prepareContainer(
     name: string,
     hasLabel: boolean = true,
     // FIXME
     content: DocumentFragment | HTMLElement,
-    addedCSSClasses: string,
+    addedCSSClassesForChild: string,
     addedCSSClassesForContainer: string,
     innerHTML?: string,
-  ) {
+  ): void {
     const normalizedName = this._normalizeName(name);
     const ID = "" + normalizedName;
     const nameClass = "mathQuiz__" + normalizedName;
-    const innerClasses = addedCSSClasses ? addedCSSClasses : "";
+    const innerClasses = addedCSSClassesForChild ? addedCSSClassesForChild : "";
     const outerClasses = addedCSSClassesForContainer
       ? addedCSSClassesForContainer
       : "";
@@ -168,6 +171,12 @@ class MathQuiz {
     }
   }
 
+  /**
+   * Updates container child element
+   * @method _updateContainerValue
+   * @param  name                  name of the container which should be updated
+   * @param  newValue              nev child or innerHTML of the container
+   */
   _updateContainerValue(name: string, newValue: any): void {
     const targetDomElement = document.getElementById(name);
     targetDomElement.innerHTML = "";
@@ -179,6 +188,13 @@ class MathQuiz {
     }
   }
 
+  /**
+   * Update style of the container element
+   * @method _updateContainerStyle
+   * @param  name                  name of the selected container
+   * @param  cssName               CSS property name
+   * @param  cssNewValue           CSS property value
+   */
   _updateContainerStyle(
     name: string,
     cssName: string,
@@ -188,6 +204,13 @@ class MathQuiz {
     targetDomElement.style.setProperty(cssName, cssNewValue);
   }
 
+  /**
+   * [_updateStateAndContainer description]
+   * @method _updateStateAndContainer
+   * @param  value                    [description]
+   * @param  stateName                [description]
+   * @param  containerName            [description]
+   */
   _updateStateAndContainer(
     value: any,
     stateName: string,
@@ -197,7 +220,11 @@ class MathQuiz {
     this._updateContainerValue(containerName, value);
   }
 
-  _quitTimer() {
+  /**
+   * Clears question timer and hides graphical time progress bar
+   * @method _quitTimer
+   */
+  _quitTimer(): void {
     if (this.state.currentTimer) {
       this.state.timePassed = 0;
       this.state.timeRemaining = this.CONFIG.QUESTION_TIMEOUT;
@@ -211,7 +238,11 @@ class MathQuiz {
     }
   }
 
-  _startTimer() {
+  /**
+   * Starts question timer and shows time progress bar if needed
+   * @method _startTimer
+   */
+  _startTimer(): void {
     const timeLimit = this.CONFIG.QUESTION_TIMEOUT;
     this._updateContainerValue("time", timeLimit);
     this._quitTimer();
@@ -236,8 +267,13 @@ class MathQuiz {
     }, 1000);
   }
 
-  // Process answer fro player
-  _giveAnswer(pointsToAdd: number, shouldAddTimeBonus: boolean) {
+  /**
+   * Process answer from player
+   * @method _giveAnswer
+   * @param  pointsToAdd        calculated value of points to be added
+   * @param  shouldAddTimeBonus bool stating if time bonus points should be added
+   */
+  _giveAnswer(pointsToAdd: number, shouldAddTimeBonus: boolean): void {
     // Summary of points gained for current question
     const timeBonus: number = shouldAddTimeBonus ? this.state.timeRemaining : 0;
 
@@ -257,15 +293,26 @@ class MathQuiz {
     }
   }
 
-  // Helper for generating answers
+  /**
+   * Helper for generating answers
+   * @method _generateRandomAnswer
+   * @param  correct               correct value
+   * @param  diff                  margin for generating other answers
+   * @return                       answer as number
+   */
   _generateRandomAnswer(correct: number, diff: number): number {
     return Math.floor(
       Math.random() * (correct + diff - (correct - diff)) + (correct - diff),
     );
   }
 
-  // Create answer buttons
-  _createAnswers(question: string) {
+  /**
+   * Create answer buttons
+   * @method _createAnswers
+   * @param  question       math equation in string form which will become a question
+   * @return                document fragment containing answer buttons
+   */
+  _createAnswers(question: string): DocumentFragment {
     // Creating container and answers values
     const answersContainer = document.createDocumentFragment();
 
@@ -325,8 +372,12 @@ class MathQuiz {
     return answersContainer;
   }
 
-  // Show question and possible answers to user
-  _setQuestionAndAnswers(questionNumber: number) {
+  /**
+   * Show question and possible answers to user
+   * @method _setQuestionAndAnswers
+   * @param  questionNumber         index of question from list to show
+   */
+  _setQuestionAndAnswers(questionNumber: number): void {
     // Show new question
     this._updateStateAndContainer(
       this.state.questions[questionNumber].toString(),
@@ -348,7 +399,11 @@ class MathQuiz {
     );
   }
 
-  _showHighScores() {
+  /**
+   * Prepares high score tables and shows screen
+   * @method _showHighScores
+   */
+  _showHighScores(): void {
     if (!this.state.nameEntryPossible) {
       return;
     }
@@ -402,6 +457,10 @@ class MathQuiz {
     this.state.nameEntryPossible = false;
   }
 
+  /**
+   * Clears input with name entry
+   * @method _clearNameInput
+   */
   _clearNameInput(): void {
     const nameInput: HTMLInputElement = <HTMLInputElement>document.getElementById(
       this.nameInput.node.id,
@@ -410,7 +469,12 @@ class MathQuiz {
     nameInput.focus();
   }
 
-  // Update high scores table
+  /**
+   * Update high scores table
+   * @method _updateHighScores
+   * @param  name              [description]
+   * @param  results           [description]
+   */
   _updateHighScores(name: string, results: number): void {
     // High score omitting requirements
     const noResultsOrPlayerName = results <= 0 || name.length < 3;
@@ -436,8 +500,12 @@ class MathQuiz {
     this._clearNameInput();
   }
 
-  // Ending quiz
-  _endQuiz() {
+  /**
+   * Ending quiz
+   * @method _endQuiz
+   * @return [description]
+   */
+  _endQuiz(): void {
     // Resetting timer
     this._quitTimer();
 
@@ -448,7 +516,11 @@ class MathQuiz {
     this._updateHighScores(this.state.playerName, this.state.score);
   }
 
-  // Switch the currently visible elements
+  /**
+   * Switch the currently visible screens
+   * @method _switchScreen
+   * @param  screenNumber  index number of screen to be shown
+   */
   _switchScreen(screenNumber: number): void {
     // Get current classes of container
     const currentScreenClasses = this.CONFIG.APP_CONTAINER.className;
@@ -463,9 +535,14 @@ class MathQuiz {
     this.CONFIG.APP_CONTAINER.className = nextScreenClasses;
   }
 
-  _generateQuestions() {
-    const questionsArray = [];
-    const generateInt = () => Math.ceil(Math.random() * 10);
+  /**
+   * Generating array of random questions
+   * @method _generateQuestions
+   * @return array of strings containing question
+   */
+  _generateQuestions(): string[] {
+    const questionsArray: string[] = [];
+    const generateInt = (): number => Math.ceil(Math.random() * 10);
     // FIXME add enum
     const operations = ["+", "-", "/", "*"];
     const getRandomOperation = (opArr: Array<string>): string =>
@@ -484,8 +561,11 @@ class MathQuiz {
     return questionsArray;
   }
 
-  // Starting the quiz
-  _startQuiz() {
+  /**
+   * Starting the quiz
+   * @method _startQuiz
+   */
+  _startQuiz(): void {
     if (this.state.quizActive) {
       return;
     }
@@ -512,12 +592,19 @@ class MathQuiz {
     this.state.quizActive = true;
   }
 
-  // Create buttons with event handlers
+  /**
+   * Create buttons with event handlers
+   * @method _createControls
+   * @param  name              name of the control component
+   * @param  functionName      function to be called after component interaction
+   * @param  additionalClasses CSS classes to be added to the control component
+   * @return                   document fragment with app controls
+   */
   _createControls(
     name: string,
     functionName: Function,
     additionalClasses: string = "",
-  ) {
+  ): DocumentFragment {
     // Creating container and button
     const controlName = this._normalizeName(name);
     const classNames = "button " + additionalClasses;
@@ -541,8 +628,14 @@ class MathQuiz {
     return controlsContainer;
   }
 
-  // Create text input
-  _createNameInput(name: string, functionName: Function) {
+  /**
+   * Create text input
+   * @method _createNameInput
+   * @param  name             name of the input
+   * @param  functionName     action to be called on input submit
+   * @return                  HTML input element
+   */
+  _createNameInput(name: string, functionName: Function): HTMLInputElement {
     const inputName = this._normalizeName(name);
     const input = document.createElement("input");
     input.type = "text";
@@ -560,12 +653,20 @@ class MathQuiz {
     return input;
   }
 
-  _changePlayerName(newValue: string) {
+  /**
+   * Altering quiz state's player name
+   * @method _changePlayerName
+   * @param  newValue          new name of the player
+   */
+  _changePlayerName(newValue: string): void {
     this.state.playerName = newValue;
   }
 
-  // Initializing the app
-  init() {
+  /**
+   * Initialize the quiz
+   * @method init
+   */
+  init(): void {
     // Initialize game
     console.log("Initializing app");
 
@@ -738,6 +839,3 @@ class MathQuiz {
 }
 
 export default MathQuiz;
-
-//const mathQuiz = new MathQuiz();
-//mathQuiz.init();
